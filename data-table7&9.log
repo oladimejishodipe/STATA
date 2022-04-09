@@ -1,0 +1,164 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/oladimeji/Desktop/laboreconomics/replication/labordata/data-table7&9.log
+  log type:  text
+ opened on:  21 Feb 2021, 01:09:49
+
+. 
+. use IPUM14.dta
+
+. 
+. 
+. 
+. *********************************************************
+. *Drop observation for years 1960 - 1990
+. ********************************************************* 
+. drop if year==1960 
+(360,607 observations deleted)
+
+. drop if year==1970 
+(448,328 observations deleted)
+
+. drop if year==1980 
+(2,921,046 observations deleted)
+
+. drop if year==1990 
+(685,898 observations deleted)
+
+. 
+. 
+. *********************************************************
+. /*Generate a variable "mobdum1950" that interacts the mobilization rates with
+> 1950 dummy */
+. ********************************************************* 
+. gen mobdum1950=dummy1950*d1844
+
+. 
+. 
+. *********************************************************
+. /*Generate a dummy variable "farmer" for faamer  */
+. ********************************************************* 
+. gen byte farmer=(farmd==1)
+
+. 
+. 
+. *********************************************************
+. /*Generate a variable "mEdyrs40dumm195" that interacts the mean of education for 
+> men with 1950 dummy */
+. ********************************************************* 
+. gen  Edyrs40=Edyrs
+
+. replace Edyrs40=0 if female==1 
+(40,211 real changes made)
+
+. gen Edyrs40dumm1950= Edyrs40*dummy1950
+
+. 
+. 
+. 
+. *********************************************************
+. /*Generate a variable "mag1424y1950" that interacts the men with age range of 
+> 14 - 24 and interact with  1950 dummy */
+. *********************************************************
+. gen  mag1424=age
+
+. replace mag1424=0 if female==1 & age>=25
+(31,294 real changes made)
+
+. gen  mag1424y1950= mag1424*dummy1950
+
+. 
+. 
+. *********************************************************
+. /*Generate a variable "mag2534y1950" that represents the age range 
+> 25 - 35 of men and interact with  1950 dummy */
+. *********************************************************
+. gen mag2534=age
+
+. replace  mag2534=0 if female==1 & age>14 | age<25 | age>35
+(114,539 real changes made)
+
+. gen  mag2534y1950= mag2534*dummy1950
+
+. 
+. 
+. *********************************************************
+. /*Generate a dummy variable "germy1950" represents German born male and 
+> interact with  1950 dummy */
+. *********************************************************
+. gen byte germ=(bplk==82)
+
+. replace  germ=0 if female==1 
+(292 real changes made)
+
+. gen   germy1950=  germ*dummy1950
+
+. 
+. *********************************************************
+. /*Generate a variable "dummy1950sfage" that interacts the female age
+> and interact with  1950 dummy */
+. *********************************************************
+. 
+. gen dummy1950sfage= dummy1950*sfage
+(110,908 missing values generated)
+
+. 
+. 
+. *********************************************************
+. /*Generate  variables "sflwkwagedum195 & smlwkwagedum1950" 
+> that record the log of state mean wage of both male and female sepately
+> interact with 1950 dummy */
+. *********************************************************
+. sort stateicp
+
+. by stateicp: egen sfwrks=mean(fwrks) 
+
+. by stateicp: egen smwrks=mean(fwrks)
+
+. 
+. by stateicp: egen sflwkwage=mean(flwkwage) if year==1940
+(84319 missing values generated)
+
+. by stateicp: gen sflwkwage1=sflwkwage
+(84,319 missing values generated)
+
+. gen sflwkwagedum1950=dummy1950*sflwkwage1
+(84,319 missing values generated)
+
+. 
+. by stateicp: egen smlwkwage=mean(mlwkwage) if year==1940
+(84319 missing values generated)
+
+. by stateicp: gen smlwkwage1=smlwkwage
+(84,319 missing values generated)
+
+. gen smlwkwagedum1950=dummy1950*smlwkwage1
+(84,319 missing values generated)
+
+. 
+. 
+. *********************************************************
+. /*Generate set dummies for each birth place variable (as defined in the
+> "IPUM14.dta") and each age for the female already interacted woth 1950 dummies */
+. *********************************************************
+. xi i.bpl  i.dummy1950sfage
+i.bpl             _Ibpl_1-999         (naturally coded; _Ibpl_1 omitted)
+i.dummy1950sf~e   _Idummy1950_0-64    (naturally coded; _Idummy1950_0 omitted)
+
+. 
+. ************************************************************
+. * Save this data as IPUM15 to be used in estimating Table 7 & 9
+. ************************************************************
+. save "IPUM15", replace
+(note: file IPUM15.dta not found)
+file IPUM15.dta saved
+
+. 
+end of do-file
+
+. log close
+      name:  <unnamed>
+       log:  /Users/oladimeji/Desktop/laboreconomics/replication/labordata/data-table7&9.log
+  log type:  text
+ closed on:  21 Feb 2021, 01:11:27
+-------------------------------------------------------------------------------------------------

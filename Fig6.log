@@ -1,0 +1,175 @@
+-------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/oladimeji/Desktop/laboreconomics/replication/labordata/Fig6.log
+  log type:  text
+ opened on:  21 Feb 2021, 01:13:21
+
+. use IPUM14.dta
+
+. 
+. 
+. ********************************************************************************
+. *Drop all variables in the "cleaned-up data except year, stateicp and the female weekly wage
+. * Drop all all years except year == 1940
+. ********************************************************************************
+. drop urban-fwkwage1959 sample-region
+
+. drop if year==1950 |year==1960 | year==1990  | year==1970 | year==1980
+(4,500,198 observations deleted)
+
+. drop  if flwkwagek==.
+(48,380 observations deleted)
+
+. 
+. ********************************************************************************
+. *Compute the mean of the female weekly wage for each state, and save it with "flwkwagek1940"
+. * Then save the data file with "IPUMmean1940"
+. ********************************************************************************
+. collapse (mean) flwkwagek, by(stateicp)
+
+. gen flwkwagek1940 = flwkwagek
+
+. drop  flwkwagek
+
+. save "IPUMmean1940", replace
+file IPUMmean1940.dta saved
+
+. 
+. 
+. 
+. ********************************************************************************
+. *TImport the cleaned-up data againn"IPUM14"
+. ********************************************************************************
+. 
+. 
+. clear
+
+. cd "/Users/oladimeji/Desktop/laboreconomics/replication/labordata"
+/Users/oladimeji/Desktop/laboreconomics/Replication/labordata
+
+. use IPUM14.dta
+
+. 
+. ********************************************************************************
+. *Drop all variables in the "cleaned-up data except year, stateicp and the female weekly wage
+. * Drop all all years except year == 1950
+. ********************************************************************************
+. drop urban-fwkwage1959 sample-region
+
+. drop if year==1940 |year==1960 | year==1990  | year==1970 | year==1980
+(4,483,043 observations deleted)
+
+. drop if flwkwagek==.
+(62,528 observations deleted)
+
+. 
+. ********************************************************************************
+. *Compute the mean of the female weekly wage for each state, and save it with "flwkwagek1950"
+. * Then save the data file with "IPUMmean1950"
+. ********************************************************************************
+. collapse (mean) flwkwagek, by(stateicp)
+
+. gen flwkwagek1950 = flwkwagek
+
+. drop  flwkwagek
+
+. save "IPUMmean1950", replace
+file IPUMmean1950.dta saved
+
+. 
+. 
+. ********************************************************************************
+. *Clear the  variale window and import the above saved data file and merge them with 
+. *file with mobilizatio rate data and save the file with "Fig6"
+. ********************************************************************************
+. clear 
+
+. use IPUMmean1940.dta
+
+. 
+. sort stateicp
+
+. 
+. merge stateicp using  IPUMmean1950.dta
+(note: you are using old merge syntax; see [D] merge for new syntax)
+(label stateicp_lbl already defined)
+
+. 
+. drop  _merge
+
+. 
+. 
+. 
+. sort stateicp
+
+. 
+. merge stateicp using stateicp.dta
+(note: you are using old merge syntax; see [D] merge for new syntax)
+
+. 
+. drop age13441-year
+
+. drop  _merge
+
+. 
+. 
+. sort stateicp
+
+. 
+. merge stateicp using stateicpd.dta
+(note: you are using old merge syntax; see [D] merge for new syntax)
+(label stateicp_lbl already defined)
+
+. 
+. drop  _merge
+
+. 
+. gen Dlogwage= ((flwkwagek1950 - flwkwagek1940)/flwkwagek1940)
+
+. save "Fig6", replace
+file Fig6.dta saved
+
+. 
+. 
+. ********************************************************************************
+. *Import the data name "Fig6.data and plot the graph 
+. ********************************************************************************
+. use Fig6.dta
+
+. 
+. twoway (lfit Dlogwage d1844) (scatter Dlogwage d1844, msymbol(none) mlabel(stateicd)), ytitle(C
+> hange in mean log weekly wage) xtitle(Percent of Eligible Males ages 18 - 44 Mobilized) legend(
+> off)
+
+. 
+. 
+. 
+end of do-file
+
+. do "/Users/oladimeji/Desktop/laboreconomics/Replication/labordata/Table3-1970-1990.do"
+
+. ********************************************************************************
+. /*This file used the clean data saved in the directory as "IPUM14" estimate the
+> OLS regression in Table 3 tagged 2. 1970 -1990 */
+. ********************************************************************************
+. 
+. 
+. clear
+
+. cd "/Users/oladimeji/Desktop/laboreconomics/replication/labordata"
+/Users/oladimeji/Desktop/laboreconomics/Replication/labordata
+
+. log using "/Users/oladimeji/Desktop/laboreconomics/replication/labordata/Table3-1970-1990.log"
+log file already open
+r(604);
+
+end of do-file
+
+r(604);
+
+. log close
+      name:  <unnamed>
+       log:  /Users/oladimeji/Desktop/laboreconomics/replication/labordata/Fig6.log
+  log type:  text
+ closed on:  21 Feb 2021, 01:14:35
+-------------------------------------------------------------------------------------------------
